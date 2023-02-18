@@ -56,23 +56,33 @@ template Sudoku(n) {
     component inRange[n][n]; // Constraint that each element in the solution is between 1 and 9
     component rowIsDistinct[n]; // Constraint that each row in the solution has no duplicates
 
-    for (var i = 0; i < n; i++) {
-        rowIsDistinct[i] = Distinct(n);
-        rowIsDistinct[i].in <== solution[i];
-        for (var j = 0; j < n; j++) {
-            inRange[i][j] = OneToNine();
-            inRange[i][j].in <== solution[i][j];
+    for (var row = 0; row < n; row++) {
+
+        // Row duplicate check
+        rowIsDistinct[row] = Distinct(n);
+        rowIsDistinct[row].in <== solution[row];
+
+        for (var col = 0; col < n; col++) {
+            // In range check
+            inRange[row][col] = OneToNine();
+            inRange[row][col].in <== solution[row][col];
 
             // Constraint that the solution agrees with the puzzle
             // If the puzzle cell is 0 then the first term in the product will be 0 and the constraint will be satisfied
             // If the puzzle cell is not 0 then the second term in the product will be 0 if and only if the puzzle cell and solution cell have the same value, and the constraint will be satisfied
-            puzzle[i][j] * (puzzle[i][j] - solution[i][j]) === 0;
+            puzzle[row][col] * (puzzle[row][col] - solution[row][col]) === 0;
         }
     }
 
-    // TODO - consolidate the above into a single double for loop
+    component colIsDistinct[n]; // Constraint that each column in the solution has no duplicates
+    for (var col = 0; col < n; col++) {
+        colIsDistinct[col] = Distinct(n);
+        for (var row = 0; row < n; row++) {
+            // Column duplicate check
+            colIsDistinct[col].in[row] <== solution[row][col];
+        }
+    }
 
-    // TODO - verify columns
     // TODO - verify sub-squares
 }
 
