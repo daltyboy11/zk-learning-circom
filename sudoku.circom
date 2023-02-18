@@ -10,7 +10,7 @@ template NonEqual() {
     inverse * (in0 - in1) === 1;
 }
 
-// Check that all elements in in are unique
+// Check that all elements in `in` are unique
 template Distinct(n) {
     signal input in[n];
     // We check this by setting a constraint that
@@ -21,6 +21,19 @@ template Distinct(n) {
             nonEqual[i][j] = NonEqual();
             nonEqual[i][j].in0 <== in[i];
             nonEqual[i][j].in1 <== in[j];
+        }
+    }
+}
+
+template DistinctSubsquare(sqrtN, rowOffset, colOffset) {
+    var n = sqrtN * sqrtN;
+    signal input solution[n][n];
+    component distinct = Distinct(n);
+    var i = 0;
+    for (var row = sqrtN * rowOffset; row < sqrtN * rowOffset + sqrtN; row++) {
+        for (var col = sqrtN * colOffset; col < sqrtN * colOffset + sqrtN; col++) {
+            distinct.in[i] <== solution[row][col];
+            i = i + 1;
         }
     }
 }
@@ -83,7 +96,20 @@ template Sudoku(n) {
         }
     }
 
-    // TODO - verify sub-squares
+    // Verify the subsquares
+    var sqrtN = 0;
+    while (sqrtN * sqrtN < n) {
+        sqrtN = sqrtN + 1;
+    }
+    component distinctSubsquares[n];
+    var subsquareIndex = 0;
+    for (var rowOffset = 0; rowOffset < sqrtN; rowOffset++) {
+        for (var colOffset = 0; colOffset < sqrtN; colOffset++) {
+            distinctSubsquares[subsquareIndex] = DistinctSubsquare(sqrtN, rowOffset, colOffset);
+            distinctSubsquares[subsquareIndex].solution <== solution;
+            subsquareIndex = subsquareIndex + 1;
+        }
+    }
 }
 
 component main {public[puzzle]} = Sudoku(9);
