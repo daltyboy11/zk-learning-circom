@@ -1,4 +1,4 @@
-pragma circom 2.0.0;
+pragma circom 2.0.4;
 
 // Check that in0 and in1 are not equal
 template NonEqual() {
@@ -53,38 +53,27 @@ template Sudoku(n) {
     // puzzle is the same, but a zero indicates a blank
     signal input puzzle[n][n];
 
-    // For each element in the solution, check that the number
-    // is in the range [1, 9]
-    component inRange[n][n];
+    component inRange[n][n]; // Constraint that each element in the solution is between 1 and 9
+    component rowIsDistinct[n]; // Constraint that each row in the solution has no duplicates
+
     for (var i = 0; i < n; i++) {
+        rowIsDistinct[i] = Distinct(n);
+        rowIsDistinct[i].in <== solution[i];
         for (var j = 0; j < n; j++) {
             inRange[i][j] = OneToNine();
             inRange[i][j].in <== solution[i][j];
-        }
-    }
 
-    // Make sure that the puzzle and the solution agree
-    for (var i = 0; i < n; i++) {
-        for (var j = 0; j < n; j++) {
+            // Constraint that the solution agrees with the puzzle
             // If the puzzle cell is 0 then the first term in the product will be 0 and the constraint will be satisfied
             // If the puzzle cell is not 0 then the second term in the product will be 0 if and only if the puzzle cell and solution cell have the same value, and the constraint will be satisfied
             puzzle[i][j] * (puzzle[i][j] - solution[i][j]) === 0;
         }
     }
 
-    // Ensure that all elements in a row are distinct
-    component rowIsDistinct[n];
-    for (var i = 0; i < n; i++) {
-        rowIsDistinct[i] = Distinct(n);
-        rowIsDistinct[i].in <== solution[i];
-    }
-
     // TODO - consolidate the above into a single double for loop
 
     // TODO - verify columns
     // TODO - verify sub-squares
-
-
 }
 
 component main {public[puzzle]} = Sudoku(9);
