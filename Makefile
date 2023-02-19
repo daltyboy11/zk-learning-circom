@@ -1,18 +1,20 @@
 SHELL = zsh
 
-circom = sudoku.circom
-r1cs = sudoku.r1cs
-wasm = sudoku_js/sudoku.wasm
-wit_gen = sudoku_js/generate_witness.js
-compile_outputs = sudoku_js/witness_calculator.js $(r1cs) $(wasm) $(wit_gen)
-pk = sudoku.pk
-vk = sudoku.vk
-ptau = sudoku.ptau
+circuit = threecoloring
+
+circom = $(circuit).circom
+r1cs = $(circuit).r1cs
+wasm = $(circuit)_js/$(circuit).wasm
+wit_gen = $(circuit)_js/generate_witness.js
+compile_outputs = $(circuit)_js/witness_calculator.js $(r1cs) $(wasm) $(wit_gen)
+pk = $(circuit).pk
+vk = $(circuit).vk
+ptau = $(circuit).ptau
 keys = $(pk) $(vk)
-p_input = sudoku.input.json
-wit = sudoku.wtns
-pf = sudoku.pf.json
-inst = sudoku.inst.json
+p_input = $(circuit).input.json
+wit = $(circuit).wtns
+pf = $(circuit).pf.json
+inst = $(circuit).inst.json
 prove_outputs = $(pf) $(inst)
 
 all: verify
@@ -42,4 +44,4 @@ verify: $(pf) $(inst) $(vk)
 
 clean:
 	rm -f $(compile_outputs) $(ptau) $(keys) $(wit) $(prove_outputs)
-	rmdir sudoku_js
+	rmdir $(circuit)_js
