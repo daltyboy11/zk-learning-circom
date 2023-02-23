@@ -1,5 +1,15 @@
 pragma circom 2.0.4;
 
+// Check that in0 and in1 are not equal
+template NonEqual() {
+    signal input in0;
+    signal input in1;
+    // Check that in0 - in1 is not 0
+    signal inverse;
+    inverse <-- 1 / (in0 - in1);
+    inverse * (in0 - in1) === 1;
+}
+
 // Taken from https://github.com/iden3/circomlib/blob/master/circuits/comparators.circom
 template IsZero() {
     signal input in;
@@ -25,7 +35,7 @@ template IsEqual() {
     isz.out ==> out;
 }
 
-template CheckNeighbors() {
+template CheckNodePair() {
     signal input color1;
     signal input color2;
     signal input areNeighbors;
@@ -76,7 +86,7 @@ template ThreeColoring(n) {
     component checkNeighbor[n][n];
     for (var node = 0; node < n; node++) {
         for (var neighbor = 0; neighbor < n; neighbor++) {
-            checkNeighbor[node][neighbor] = CheckNeighbors();
+            checkNeighbor[node][neighbor] = CheckNodePair();
             checkNeighbor[node][neighbor].color1 <== colors[node];
             checkNeighbor[node][neighbor].color2 <== colors[neighbor];
             checkNeighbor[node][neighbor].areNeighbors <== edges[node][neighbor];

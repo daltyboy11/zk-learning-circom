@@ -70,7 +70,6 @@ template Sudoku(n) {
     component rowIsDistinct[n]; // Constraint that each row in the solution has no duplicates
 
     for (var row = 0; row < n; row++) {
-
         // Row duplicate check
         rowIsDistinct[row] = Distinct(n);
         rowIsDistinct[row].in <== solution[row];

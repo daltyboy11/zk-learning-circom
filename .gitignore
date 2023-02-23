@@ -1,12 +1,12 @@
 # ZKP stuff
-sudoku.inst.json
-sudoku.pf.json
-sudoku.pk
-sudoku.ptau
-sudoku.r1cs
-sudoku.vk
-sudoku.wtns
-sudoku_js/
+*.inst.json
+*.pf.json
+*.pk
+*.ptau
+*.r1cs
+*.vk
+*.wtns
+*_js/
 
 # Node stuff
 node_modules/
